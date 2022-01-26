@@ -4,8 +4,8 @@
 
 ## 使用方法  
 直接下载二进制文件打开即可  
-[下载地址](https://github.com/XiaoMiku01/login_bili_go/releases)
-
+[Github下载地址](https://github.com/XiaoMiku01/login_bili_go/releases)  
+[百度云下载地址](链接：https://pan.baidu.com/s/1He_TAnT9OJm_1gJcz8wPOg?pwd=soul )提取码：soul
 
 
 ```shell
