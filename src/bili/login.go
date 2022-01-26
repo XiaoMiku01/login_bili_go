@@ -86,13 +86,15 @@ func verify_login(login_key string) {
 	}
 }
 
-func is_login() (bool, gjson.Result) {
+func is_login() (bool, gjson.Result, string, string) {
 	url := "https://api.bilibili.com/x/web-interface/nav"
 	cookie, err := ioutil.ReadFile("cookie.txt")
 	if err != nil {
-		return false, gjson.Result{}
+		return false, gjson.Result{}, "", ""
 	}
 	cookie_str := string(cookie)
+	reg := re.MustCompile(`bili_jct=([0-9a-zA-Z]+);`)
+	csrf := reg.FindStringSubmatch(cookie_str)[1]
 	client := http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("User-Agent", user_agent)
@@ -104,17 +106,16 @@ func is_login() (bool, gjson.Result) {
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	data := gjson.ParseBytes(body)
-	return data.Get("code").Int() == 0, data
+	return data.Get("code").Int() == 0, data, cookie_str, csrf
 }
 
-func Login() {
+func Login() (string, string) {
 	for {
-		is_login, data := is_login()
+		is_login, data, cookie_str, csrf := is_login()
 		if is_login {
 			uname := data.Get("data.uname").String()
 			fmt.Println(uname + "已登录")
-			fmt.Scanf("%s", "")
-			break
+			return cookie_str, csrf
 		}
 		fmt.Println("未登录,或cookie已过期,请扫码登录")
 		fmt.Println("请最大化窗口，以确保二维码完整显示，回车继续")
